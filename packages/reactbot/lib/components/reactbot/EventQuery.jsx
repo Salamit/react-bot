@@ -3,15 +3,15 @@ import {withCurrentUser, registerComponent, Components} from 'meteor/vulcan:core
 
 
 
-const Index = ({currentUser}) => 
+const EventQuery = ({currentUser}) => 
    
     <div style={ { maxWidth: '500px', margin: '20px auto' } }>
 
-        <p>Test page</p>
+        <p>EventQuery</p>
 
 
     </div>
       ;
 
 
-registerComponent({name: 'Index', component: Index, hocs: [withCurrentUser]});
+registerComponent({name: 'EventQuery', component: EventQuery, hocs: [withCurrentUser]});
