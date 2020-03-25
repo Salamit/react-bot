@@ -29,14 +29,21 @@ import './dialogFlow.js';
 const dialogflow = require('dialogflow');
 const config = require('../config/keys');
 const { ApolloServer, gql } = require('apollo-server-express');
-
+import bodyParser from 'body-parser';
 
 import Express from 'express';
-const { URLSearchParams } = require('url');
-const params = new URLSearchParams();
-const app = new Express();
 
+const { URLSearchParams } = require('url');
+// const params = new URLSearchParams();
+const app = new Express();
 const restRoutes = Express.Router();
+// require('./routes/dialogFlowRoutes');
+const sessionClient = new dialogflow.SessionsClient()
+
+const sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID);
+
+// params.append('a', 1);
+
 
 
 
@@ -67,34 +74,28 @@ const server = new ApolloServer({
   resolvers,
 });
 
-app.use('/', restRoutes)
-params.append('a', 1);
 
+
+app.use('/', restRoutes)
+app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
     res.send({'hello': 'there'})
 })
 
-const sessionClient = new dialogflow.SessionsClient()
-
-const sessionPath = sessionClient.sessionPath(config.googleProjectID, config.dialogFlowSessionID);
-
-app.post('/api/df_text_query', async function  (req, res) {
-        // console.log(req)
-        const request = {
+app.post('/api/df_text_query', (req, res) => {
+    const request = {
         session: sessionPath,
         queryInput: {
           text: {
             // The query to send to the dialogflow agent
-            text: params, //req.body.text,
+            text: req.body.text,
             // The language used by the client (en-US)
             languageCode: config.dialogFlowSessionLanguageCode,
           },
         },
-      };
-
-
-    let responses = await sessionClient
+    };
+    sessionClient
         .detectIntent(request)
         .then(responses => {
             console.log('Detected intent');
@@ -106,23 +107,69 @@ app.post('/api/df_text_query', async function  (req, res) {
             } else {
               console.log(`  No intent matched.`);
             }
-
+        }).catch(err => {
+            console.log('ERROR:', err);
         })
-        .catch(err => {
-            console.log('ERROR', err)
-        });
+
+  
+
+    res.send({'do': 'text query'})
+});
+
+app.post('/api/df_event_query', (req, res) => {
+    res.send({'do': 'event query'})
+});
+
+
+
+
+
+
+
+// app.post('/api/df_text_query', async function  (req, res) {
+//         // console.log(req)
+//         const request = {
+//         session: sessionPath,
+//         queryInput: {
+//           text: {
+//             // The query to send to the dialogflow agent
+//             text: params, //req.body.text,
+//             // The language used by the client (en-US)
+//             languageCode: config.dialogFlowSessionLanguageCode,
+//           },
+//         },
+//       };
+
+
+//     let responses = await sessionClient
+//         .detectIntent(request)
+//         .then(responses => {
+//             console.log('Detected intent');
+//             const result = responses[0].queryResult;
+//             console.log(`  Query: ${result.queryText}`);
+//             console.log(`  Response: ${result.fulfillmentText}`);
+//             if (result.intent) {
+//               console.log(`  Intent: ${result.intent.displayName}`);
+//             } else {
+//               console.log(`  No intent matched.`);
+//             }
+
+//         })
+//         .catch(err => {
+//             console.log('ERROR', err)
+//         });
 
    
 
 
-    return res.send(responses[0].queryResult);
-})
+//     return res.send(responses[0].queryResult);
+// })
 
-app.get('/api/df_event_query', function (req, res) {
-    return res.send({
-        'do': 'event query'
-    })
-})
+// app.get('/api/df_event_query', function (req, res) {
+//     return res.send({
+//         'do': 'event query'
+//     })
+// })
 
 server.applyMiddleware({ app, path });
 
