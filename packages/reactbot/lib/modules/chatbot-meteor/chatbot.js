@@ -2,7 +2,8 @@
 
 const dialogflow = require('dialogflow');
 import structjson from '../../imports/structjson.js'; 
-const config = require('../../config/keys.js');
+// const config = require('../../config/keys.js');
+const config = require('../../config/prod.js');
 
 
 const projectId = config.googleProjectID;
