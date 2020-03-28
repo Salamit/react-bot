@@ -16,6 +16,9 @@ const credentials = {
     config.googlePrivateKey,
 };
 
+console.log('credentials')
+console.log(credentials);
+
 console.log('creating dialogflow instances')
 const sessionClient = new dialogflow.SessionsClient({projectId, credentials});
 const sessionPath = sessionClient.sessionPath(projectId, sessionId);
@@ -23,6 +26,7 @@ const sessionPath = sessionClient.sessionPath(projectId, sessionId);
 module.exports = {
     textQuery: async function(text, parameters = {}) {
       console.log('textQuery')
+
         let self = module.exports;
         const request = {
             session: sessionPath,
@@ -41,6 +45,7 @@ module.exports = {
             }
         };
         console.log('request')
+        console.log(request)
         let responses = await sessionClient.detectIntent(request);
         console.log('Detected intent');
         const result = responses[0].queryResult;
