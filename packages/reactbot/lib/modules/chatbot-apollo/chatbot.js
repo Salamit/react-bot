@@ -2,7 +2,7 @@
 
 const dialogflow = require('dialogflow');
 import structjson from '../../imports/structjson.js'; 
-const config = require('../../config/keys.js');
+const config = require('../../config/key.js');
 
 
 
