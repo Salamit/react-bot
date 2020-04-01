@@ -17,12 +17,11 @@ WebApp.connectHandlers.use( async (req, res, next) => {
 
     
     res.setHeader('Content-Type', 'application/json')
-    // if(req.url === '/'){
-    //     res.write(JSON.stringify({'hello': 'there'}))
-    //     res.end()
+    if(req.url === '/'){
+        res.write(JSON.stringify({'hello': 'there'}))
+        res.end()
 
-    // } else 
-    if (req.url === "/api/df_text_query" ){  
+    } else if (req.url === "/api/df_text_query" ){  
         console.log('here')  
         let responses = await chatbot.textQuery(req.body.text, req.body.parameters);
         console.log('responses')   
